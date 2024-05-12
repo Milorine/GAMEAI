@@ -141,6 +141,6 @@ public class healer : MonoBehaviour
         //After the healer-bot celebrate, transition to Idle
         //currentState = HealerState.Idle;
 
-        //testasd
+
     }
 }
