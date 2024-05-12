@@ -9,12 +9,13 @@ public class healer : MonoBehaviour
         //states of the healerbot
     {   
         Idle,
-        FindPokeBot,
+        Approach,
         IdentifyWound,
-        FindHealingItem,
-        CheckHealingItem,
-        DeliverHealingItem,
-        ApplyHealingItem,
+        FindIngredients,
+        CheckList,
+        CreatePotion,
+        DeliverPotion,
+        AdminsiterPotion,
         Celebrate
     }
 
@@ -32,26 +33,29 @@ public class healer : MonoBehaviour
             case HealerState.Idle:
                 IdentifyWound();
                 break;
-            case HealerState.FindPokeBot:
-                FindPokeBot();
+            case HealerState.Approach:
+                Approach();
                 break;
             case HealerState.IdentifyWound:
                 IdentifyWound();
                 break;
-            case HealerState.FindHealingItem:
-                FindHealingItem();
+            case HealerState.FindIngredients:
+                FindIngredients();
                 break;
-            case HealerState.CheckHealingItem:
-                IdentifyWound();
+            case HealerState.CheckList:
+                CheckList();
                 break;
-            case HealerState.DeliverHealingItem:
-                IdentifyWound();
+            case HealerState.CreatePotion:
+                CreatePotion();
                 break;
-            case HealerState.ApplyHealingItem:
-                IdentifyWound();
+            case HealerState.DeliverPotion:
+                DeliverPotion();
+                break;
+            case HealerState.AdminsiterPotion:
+                AdministerPotion();
                 break;
             case HealerState.Celebrate:
-                IdentifyWound();
+                Celebrate();
                 break;
         }
     }
@@ -59,51 +63,84 @@ public class healer : MonoBehaviour
     public void Idle()
     {
         Debug.Log("Idling");
-        //Healerbot goes into idle mode when no pokebot spawn for 5 seconds
+        //Healerbot goes into idle mode which is to roam around the forest
+            
+        //When healer-bot detects a poke-bot, transition to Appraoch
+        //currentState = HealerState.Approach;
+
     }
-    public void FindPokeBot()
+    public void Approach()
     {
         Debug.Log("Finding pokebot");
-        //Pokebot spawns and Healerbot is moving towards the pokebot
+        //Poke-bot spawns and healer-bot is moving towards the poke-bot
+
+        //When healer-bot reach the poke-bot, transition to IdentifyWound
+        //currentState = HealerState.IdentifyWound;
     }
     public void IdentifyWound()
     {
         Debug.Log("Identifying Wound on pokebot");
-        //Healerbot identify the pokebot and identify the healing item needed to heal the pokebot
+        //Healer-bot identify the poke-bot and identify the natural ingredients needed to craft the healing potion
+
+        //When healer-bot identify what natural ingredients to find, tranisiton to FindIngredients.
+        //currentState = HealerState.FindIngredients;
     }
-    public void FindHealingItem()
+    public void FindIngredients()
     {
         Debug.Log("Finding Healing Item");
-        //Healerbot move around the map searching for the nearest healing item in range
+        //Healer-bot move around the map searching for the natural ingredients
+
+        //When healer-bot finds the ingredients, transition to CheckList.
+        //currentState = HealerState.CheckList;
     }
-    public void CheckHealingItem()
+    public void CheckList()
     {
         Debug.Log("Checking if healing item is the correct one");
-        //Healerbot check if the healing item picked up was correct. if it is transition to DeliverHealingItem, if not transition to FindingHealinItem
+        //Healer-bot check if the there are still missing ingredients needed to craft the healing potion
+
+        //When healer-bot finds all the ingredients needed for potion, transition to  CreatePotion
+        //currentState = HealerState.CreatePotion;
+
+        //When healer-bot still have missing ingredient to find, transition to FindIngredients.
+        //currentState = HealerState.FindIngredients;
     }
-    public void DeliverHealingItem()
+
+    public void CreatePotion()
+    {
+        //Healer-bot create the potion with the ingredients gathered
+
+        //When healer-bot creates the potion, transition to DeliverPotion
+        //currentState = HealerState.DeliverPotion;
+    }
+    public void DeliverPotion()
     {
         Debug.Log("Delivering healing item to pokebot");
-        //Healerbot returns back to the pokebot with the healing item
+        //Healer-bot returns back to the poke-bot with the potion
+
+        //When healer-bot reach the poke-bot, transition to AdministerPotion.
+        //currentState = HealerState.AdministerPotion;
 
     }
-    public void ApplyHealingItem()
+    public void AdministerPotion()
     {
         Debug.Log("Finding pokebot");
-        //Healerbot Apply the HealingItem to the pokebot
+        //Healer-bot give the healing potion to the poke-bot and monitor the wound if the poke-bot is not healed idenfity the wound again.
 
-    }
+        //When healer-bot give the potion to poke-bot and the poke-bot fully heals, transition to Celebrate.
+        //currentState = HealerState.Celebrate;
 
-    public void MonitorPokeBot()
-    {
-        Debug.Log("Monitoring Pokebot");
-        //Healerbot monitor the pokebot for awhile, if pokebot still require healing transition to FindHealingItem, if not transition to Celebrate
+        //When healer-bot give the potion to poke-bot and the poke-bot is still not heals fully, transition to IdentifyWound.
+        //currentState = HealerState.IdentifyWound;
 
     }
     public void Celebrate()
     {
         Debug.Log("Healer bot celebrating");
-        //Healerbot celebrate by dancing after aiding a fellow pokebot
+        //Healer-bot celebrate by dancing after aiding a fellow poke-bot
+            
+        //After the healer-bot celebrate, transition to Idle
+        //currentState = HealerState.Idle;
 
+        //testasd
     }
 }
