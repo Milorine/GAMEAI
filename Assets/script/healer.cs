@@ -15,7 +15,7 @@ public class healer : MonoBehaviour
         CheckList,
         CreatePotion,
         DeliverPotion,
-        AdminsiterPotion,
+        AdministerPotion,
         Celebrate
     }
 
@@ -31,7 +31,7 @@ public class healer : MonoBehaviour
         switch (currentState)
         {
             case HealerState.Idle:
-                IdentifyWound();
+                Idle();
                 break;
             case HealerState.Approach:
                 Approach();
@@ -51,7 +51,7 @@ public class healer : MonoBehaviour
             case HealerState.DeliverPotion:
                 DeliverPotion();
                 break;
-            case HealerState.AdminsiterPotion:
+            case HealerState.AdministerPotion:
                 AdministerPotion();
                 break;
             case HealerState.Celebrate:
@@ -66,68 +66,68 @@ public class healer : MonoBehaviour
         //Healerbot goes into idle mode which is to roam around the forest
             
         //When healer-bot detects a poke-bot, transition to Appraoch
-        //currentState = HealerState.Approach;
+        currentState = HealerState.Approach;
 
     }
     public void Approach()
     {
-        Debug.Log("Finding pokebot");
+        Debug.Log("Running to poke-bot");
         //Poke-bot spawns and healer-bot is moving towards the poke-bot
 
         //When healer-bot reach the poke-bot, transition to IdentifyWound
-        //currentState = HealerState.IdentifyWound;
+        currentState = HealerState.IdentifyWound;
     }
     public void IdentifyWound()
     {
-        Debug.Log("Identifying Wound on pokebot");
+        Debug.Log("Identifying Wound on poke-bot");
         //Healer-bot identify the poke-bot and identify the natural ingredients needed to craft the healing potion
 
         //When healer-bot identify what natural ingredients to find, tranisiton to FindIngredients.
-        //currentState = HealerState.FindIngredients;
+        currentState = HealerState.FindIngredients;
     }
     public void FindIngredients()
     {
-        Debug.Log("Finding Healing Item");
+        Debug.Log("Finding ingredients for potion");
         //Healer-bot move around the map searching for the natural ingredients
 
         //When healer-bot finds the ingredients, transition to CheckList.
-        //currentState = HealerState.CheckList;
+        currentState = HealerState.CheckList;
     }
     public void CheckList()
     {
-        Debug.Log("Checking if healing item is the correct one");
-        //Healer-bot check if the there are still missing ingredients needed to craft the healing potion
+        Debug.Log("Checking if there is missing ingredients");
 
         //When healer-bot finds all the ingredients needed for potion, transition to  CreatePotion
-        //currentState = HealerState.CreatePotion;
+        currentState = HealerState.CreatePotion;
 
         //When healer-bot still have missing ingredient to find, transition to FindIngredients.
         //currentState = HealerState.FindIngredients;
     }
 
     public void CreatePotion()
-    {
+    {   
+        Debug.Log("Creating Potion");
         //Healer-bot create the potion with the ingredients gathered
 
         //When healer-bot creates the potion, transition to DeliverPotion
-        //currentState = HealerState.DeliverPotion;
+        currentState = HealerState.DeliverPotion;
     }
     public void DeliverPotion()
     {
-        Debug.Log("Delivering healing item to pokebot");
+        Debug.Log("Delivering potion to poke-bot");
         //Healer-bot returns back to the poke-bot with the potion
 
         //When healer-bot reach the poke-bot, transition to AdministerPotion.
-        //currentState = HealerState.AdministerPotion;
+        currentState = HealerState.AdministerPotion;
 
     }
     public void AdministerPotion()
     {
-        Debug.Log("Finding pokebot");
+        Debug.Log("Giving poke-bot potion");
         //Healer-bot give the healing potion to the poke-bot and monitor the wound if the poke-bot is not healed idenfity the wound again.
 
         //When healer-bot give the potion to poke-bot and the poke-bot fully heals, transition to Celebrate.
-        //currentState = HealerState.Celebrate;
+        currentState = HealerState.Celebrate;
 
         //When healer-bot give the potion to poke-bot and the poke-bot is still not heals fully, transition to IdentifyWound.
         //currentState = HealerState.IdentifyWound;
@@ -135,11 +135,12 @@ public class healer : MonoBehaviour
     }
     public void Celebrate()
     {
-        Debug.Log("Healer bot celebrating");
+        Debug.Log("Healer-bot celebrating");
         //Healer-bot celebrate by dancing after aiding a fellow poke-bot
             
         //After the healer-bot celebrate, transition to Idle
-        //currentState = HealerState.Idle;
+        currentState = HealerState.Idle;
+
 
         
     }
