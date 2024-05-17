@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class healer : MonoBehaviour
 {
     public HealerState currentState;
+    public float speed = 5f;
+    private Vector3 direction;
+    [SerializeField] LayerMask groundLayer;
+    bool walkPoint;
+    public Transform Pokebot;
     public enum HealerState
         //states of the healerbot
     {   
@@ -21,8 +25,9 @@ public class healer : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
-        
+    {   
+        currentState = HealerState.Idle;
+        Idle();
     }
 
     // Update is called once per frame
@@ -58,25 +63,77 @@ public class healer : MonoBehaviour
                 Celebrate();
                 break;
         }
-    }
 
+    }
     public void Idle()
     {
         Debug.Log("Idling");
+
+        //if walkpoint is false, start finding random location
+        if (!walkPoint)
+        { 
+            RandomLocation(); 
+        }
+        //if walkpoint is true walk toward the new location
+        if (walkPoint)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, direction, speed * Time.deltaTime);
+        }
+        //if the healerbot is near the new location set walkpoint to false and pick a new location
+        if (Vector3.Distance(transform.position, direction) < 10f)
+        {
+            walkPoint = false;
+        }
         //Healerbot goes into idle mode which is to roam around the forest
-            
+
         //When healer-bot detects a poke-bot, transition to Appraoch
-        currentState = HealerState.Approach;
+        //currentState = HealerState.Approach;
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Bot"))
+        {
+            Pokebot = other.transform;
+            currentState = HealerState.Approach;
+        }
+    }
+
+    public void RandomLocation()
+    {   
+        //randomize the x and z value for the direction the healer-bot is moving to
+        float x = Random.Range(-20f, 20f);
+        float z = Random.Range(-20f, 20f);
+        //set the new direction that the healerbot is moving to
+        direction = new Vector3(transform.position.x + x, transform.position.y, transform.position.z + z);
+
+        //check if the new location has a ground, if there is ground set walkpoint to true
+        if (Physics.Raycast(direction,Vector3.down,groundLayer))
+        {
+            walkPoint = true;
+        }
+
 
     }
     public void Approach()
     {
-        Debug.Log("Running to poke-bot");
+
+        // Calculate the direction from the healer to the cube
+        if (Pokebot != null)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, Pokebot.position, speed * Time.deltaTime);
+            Debug.Log("Running to poke-bot");
+        }
         //Poke-bot spawns and healer-bot is moving towards the poke-bot
 
         //When healer-bot reach the poke-bot, transition to IdentifyWound
-        currentState = HealerState.IdentifyWound;
+        //currentState = HealerState.IdentifyWound;
+        if (Pokebot == null)
+        {
+            currentState = HealerState.Idle;
+        }
     }
+
+    
     public void IdentifyWound()
     {
         Debug.Log("Identifying Wound on poke-bot");
