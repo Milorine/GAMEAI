@@ -5,10 +5,19 @@ public class healer : MonoBehaviour
 {
     public HealerState currentState;
     public float speed = 5f;
-    private Vector3 direction;
-    [SerializeField] LayerMask groundLayer;
-    bool walkPoint;
     public Transform Pokebot;
+    private Vector3 direction;
+    private int orbitCount = 0;
+    bool walkPoint = false;
+    bool reachPokebot = false;
+
+    [SerializeField] LayerMask groundLayer;
+
+
+    public float orbitSpeed = 1f; // Speed of rotation
+    public float orbitRadius = 2f; // Distance from the cube
+
+    private float angle = 0f; // Current angle in radians
     public enum HealerState
         //states of the healerbot
     {   
@@ -89,11 +98,11 @@ public class healer : MonoBehaviour
         //When healer-bot detects a poke-bot, transition to Appraoch
         //currentState = HealerState.Approach;
     }
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider pokebot)
     {
-        if (other.gameObject.CompareTag("Bot"))
+        if (pokebot.gameObject.CompareTag("Bot"))
         {
-            Pokebot = other.transform;
+            Pokebot = pokebot.transform;
             currentState = HealerState.Approach;
         }
     }
@@ -116,32 +125,64 @@ public class healer : MonoBehaviour
     }
     public void Approach()
     {
-
-        // Calculate the direction from the healer to the cube
-        if (Pokebot != null)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, Pokebot.position, speed * Time.deltaTime);
-            Debug.Log("Running to poke-bot");
+        // calculate the direction from the healer to the cube
+        if (Pokebot != null & !reachPokebot)
+        {   
+            //find the position of the pokebot, move the healer bot toward the pokebot
+            transform.position = Vector3.MoveTowards(transform.position, Pokebot.position , speed * Time.deltaTime);
+            Debug.Log("running to poke-bot");
         }
-        //Poke-bot spawns and healer-bot is moving towards the poke-bot
+        //poke-bot spawns and healer-bot is moving towards the poke-bot
 
-        //When healer-bot reach the poke-bot, transition to IdentifyWound
-        //currentState = HealerState.IdentifyWound;
+        //when healer-bot reach the poke-bot, transition to identifywound
+        //currentstate = healerstate.identifywound;
         if (Pokebot == null)
         {
             currentState = HealerState.Idle;
         }
     }
 
-    
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Bot")
+        {
+            Debug.Log("enter");
+            reachPokebot = true;
+            currentState = HealerState.IdentifyWound;
+        }
+    }
     public void IdentifyWound()
     {
         Debug.Log("Identifying Wound on poke-bot");
+        if (Pokebot != null)
+        {
+            angle += orbitSpeed * Time.deltaTime;
+
+            //calculate the position of the orbit around the cube
+            float x = Mathf.Cos(angle) * orbitRadius;
+            float z = Mathf.Sin(angle) * orbitRadius;
+            if (orbitCount < 2)
+            {
+                transform.position = Pokebot.position + new Vector3(x, 0f, z);
+            }
+
+            if (orbitCount == 2)
+            {
+                currentState = HealerState.FindIngredients;
+            }
+            //find how many orbit the healerbot has done, 1 circle is 2pi
+            if (angle >= 2 * Mathf.PI)
+            {
+                orbitCount++; 
+                angle = 0f; 
+            }
+        }
         //Healer-bot identify the poke-bot and identify the natural ingredients needed to craft the healing potion
 
         //When healer-bot identify what natural ingredients to find, tranisiton to FindIngredients.
-        currentState = HealerState.FindIngredients;
+        //currentState = HealerState.FindIngredients;
     }
+
     public void FindIngredients()
     {
         Debug.Log("Finding ingredients for potion");

@@ -30,8 +30,8 @@ public class pokebot : MonoBehaviour
         // Generate a random position within the specified range
         float x = Random.Range(-10f, 10f);
         float z = Random.Range(-10f, 10f);
-
-        randomPosition = new Vector3(transform.position.x + x, transform.position.y, transform.position.z + z);
+        float y = -0.8f;
+        randomPosition = new Vector3(transform.position.x + x, transform.position.y + y, transform.position.z + z);
         // Instantiate the cube at the random position
         if (Physics.Raycast(randomPosition, Vector3.down, groundLayer))
         {
