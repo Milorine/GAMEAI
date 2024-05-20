@@ -123,6 +123,60 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &260696485
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 260696487}
+  - component: {fileID: 260696486}
+  m_Layer: 0
+  m_Name: Ingredients
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &260696486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 260696485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df70159ba48318e4f9105e4b4da6294c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Ingredients:
+  - {fileID: 4525735241926052452, guid: 2bd15b61e5beba34e949aa1a4bef5cf7, type: 3}
+  - {fileID: 4525735241926052452, guid: 4222742c98db5ec4caeadce1f54bfb0c, type: 3}
+  - {fileID: 4525735241926052452, guid: 8cb5069327d24dc4b982d8d713821e77, type: 3}
+  - {fileID: 4525735241926052452, guid: ce06c25b6e9dd1f4e9b2d0deaf4571c2, type: 3}
+  - {fileID: 4525735241926052452, guid: 54ae0c0acc5bd424ab8a11ea85f47d00, type: 3}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  randomPosition: {x: 0, y: 2, z: 0}
+--- !u!4 &260696487
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 260696485}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.5625818, y: 1.28, z: 5.0575356}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &358033125
 GameObject:
   m_ObjectHideFlags: 0
@@ -273,7 +327,7 @@ Transform:
   m_GameObject: {fileID: 463015629}
   m_LocalRotation: {x: -0.00024080534, y: -0.006711337, z: -0.0019119974, w: 0.9999757}
   m_LocalPosition: {x: -0.053632, y: 0, z: 0.045704}
-  m_LocalScale: {x: 3.6375, y: 3.6375, z: 3.6375}
+  m_LocalScale: {x: 5.5399127, y: 3.6375, z: 5.816364}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -550,7 +604,7 @@ GameObject:
   - component: {fileID: 1058977472}
   - component: {fileID: 1058977473}
   m_Layer: 0
-  m_Name: Capsule
+  m_Name: Healer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -571,10 +625,16 @@ MonoBehaviour:
   currentState: 0
   speed: 5
   Pokebot: {fileID: 1774718855055346341, guid: 28b7c9b0215d4624bbebccf27fbd0b2a, type: 3}
+  Ingredients:
+  - {fileID: 4525735241926052452, guid: 2bd15b61e5beba34e949aa1a4bef5cf7, type: 3}
+  - {fileID: 4525735241926052452, guid: 4222742c98db5ec4caeadce1f54bfb0c, type: 3}
+  - {fileID: 4525735241926052452, guid: 8cb5069327d24dc4b982d8d713821e77, type: 3}
+  - {fileID: 4525735241926052452, guid: ce06c25b6e9dd1f4e9b2d0deaf4571c2, type: 3}
+  - {fileID: 4525735241926052452, guid: 54ae0c0acc5bd424ab8a11ea85f47d00, type: 3}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  orbitSpeed: 2
+  orbitSpeed: 5
   orbitRadius: 2
 --- !u!23 &1058977469
 MeshRenderer:

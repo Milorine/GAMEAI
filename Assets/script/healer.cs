@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using UnityEngine;
 public class healer : MonoBehaviour
 {
@@ -10,9 +12,10 @@ public class healer : MonoBehaviour
     private int orbitCount = 0;
     bool walkPoint = false;
     bool reachPokebot = false;
-
     [SerializeField] LayerMask groundLayer;
-
+    GameObject[] ingredients;
+    bool itemSelect = false;
+    GameObject Ingredient;
 
     public float orbitSpeed = 1f; // Speed of rotation
     public float orbitRadius = 2f; // Distance from the cube
@@ -34,7 +37,9 @@ public class healer : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {   
+    {
+        ingredients = FindObjectsOfType<GameObject>().Where(obj => obj.tag.StartsWith("Item")).ToArray();
+        Debug.Log(ingredients.Length);
         currentState = HealerState.Idle;
         Idle();
     }
@@ -98,12 +103,29 @@ public class healer : MonoBehaviour
         //When healer-bot detects a poke-bot, transition to Appraoch
         //currentState = HealerState.Approach;
     }
-    void OnTriggerEnter(Collider pokebot)
+    void OnTriggerEnter(Collider collide)
+    {
+        if (collide.gameObject.CompareTag("Bot"))
+        {
+            Debug.Log("collide");
+            Pokebot = collide.transform;
+            currentState = HealerState.Approach;
+        }
+
+        //collision for ingredients
+        if (collide.gameObject == Ingredient)
+        {
+            Debug.Log("reached");
+        }
+
+    }
+    void OnTriggerExit(Collider pokebot)
     {
         if (pokebot.gameObject.CompareTag("Bot"))
         {
-            Pokebot = pokebot.transform;
-            currentState = HealerState.Approach;
+            orbitCount = 0;
+            reachPokebot = false;
+            Debug.Log("exit");
         }
     }
 
@@ -137,25 +159,45 @@ public class healer : MonoBehaviour
         //when healer-bot reach the poke-bot, transition to identifywound
         //currentstate = healerstate.identifywound;
         if (Pokebot == null)
-        {
+        {   
             currentState = HealerState.Idle;
         }
     }
 
     void OnCollisionEnter(Collision collision)
-    {
+    {   
+        //collision with the pokebot
         if (collision.gameObject.tag == "Bot")
-        {
+        {   
+            //when the healer bot collide with the pokebot change state to identifywound and set reachpokebot to true avoid repeated approach to pokebot
             Debug.Log("enter");
             reachPokebot = true;
             currentState = HealerState.IdentifyWound;
         }
+
+        ////collision with the ingredients
+        //if (collision.gameObject == Ingredient)
+        //{
+        //    Debug.Log("reached");
+        //}
     }
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.tag == "Bot")
+        {
+            //after the wound is identify and healerbot leave the pokebot set reachpokebot to false to allow healer to collide later on and set orbitcount to zero.
+            reachPokebot = false;
+            orbitCount = 0;
+            Debug.Log("exit cube");
+        }
+    }
+
     public void IdentifyWound()
     {
         Debug.Log("Identifying Wound on poke-bot");
         if (Pokebot != null)
-        {
+        {   
+            //calculate the angle depending on the the speed of healerbot
             angle += orbitSpeed * Time.deltaTime;
 
             //calculate the position of the orbit around the cube
@@ -176,6 +218,10 @@ public class healer : MonoBehaviour
                 orbitCount++; 
                 angle = 0f; 
             }
+        if (Pokebot == null)
+            {
+                currentState = HealerState.Idle;
+            }
         }
         //Healer-bot identify the poke-bot and identify the natural ingredients needed to craft the healing potion
 
@@ -184,13 +230,23 @@ public class healer : MonoBehaviour
     }
 
     public void FindIngredients()
-    {
-        Debug.Log("Finding ingredients for potion");
+    {   
+        //see if item selected is true
+        if (!itemSelect)
+        {   
+            //sset itemselected to true to prevent selecting another item
+            itemSelect = true;
+            Ingredient = ingredients[Random.Range(0, ingredients.Length)];
+            Debug.Log("Finding ingredients for potion");
+        }
+        transform.position = Vector3.MoveTowards(transform.position, Ingredient.transform.position, speed * Time.deltaTime);
+
         //Healer-bot move around the map searching for the natural ingredients
 
         //When healer-bot finds the ingredients, transition to CheckList.
-        currentState = HealerState.CheckList;
+        //currentState = HealerState.CheckList;
     }
+
     public void CheckList()
     {
         Debug.Log("Checking if there is missing ingredients");

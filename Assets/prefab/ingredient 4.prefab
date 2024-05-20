@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 4352058591682529529}
   - component: {fileID: 2319906380864232492}
   - component: {fileID: 1939989591911642956}
-  - component: {fileID: 8914792790578296161}
+  - component: {fileID: -5264145296645301498}
   m_Layer: 0
   m_Name: ingredient 4
-  m_TagString: Bot
+  m_TagString: Item5
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -102,8 +102,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   randomPosition: {x: 0, y: 0, z: 0}
---- !u!135 &8914792790578296161
-SphereCollider:
+--- !u!65 &-5264145296645301498
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -121,5 +121,5 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 10
+  m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
