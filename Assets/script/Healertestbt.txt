@@ -1,0 +1,35 @@
+tree("Root")
+    repeat
+        sequence
+            tree("Idle")
+            tree("Approach")
+            tree("IdentifyWound")
+            tree("FindIngredients")
+
+tree("Idle")
+    sequence
+        Idle
+        fallback
+            IsPokebotDetected
+            Succeed
+
+tree("Approach")
+    sequence
+        Approach
+        fallback
+            IsPokebotReached
+            Succeed
+
+tree("IdentifyWound")
+    sequence
+        IdentifyWound
+        fallback
+            IsWoundIdentified
+            Succeed
+
+tree("FindIngredients")
+    sequence
+        FindIngredients
+        fallback
+            IsIngredientReached
+            Succeed

@@ -15,12 +15,12 @@ public class pokebot : MonoBehaviour
     void Update()
     {
         // Check for input or condition to spawn a cube
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SpawnRandomCube();
-        }
     }
 
+    private void Start()
+    {
+        SpawnRandomCube();
+    }
     void SpawnRandomCube()
     {
         if (currentCube != null)
