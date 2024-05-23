@@ -5,6 +5,8 @@ tree("Root")
             tree("Approach")
             tree("IdentifyWound")
             tree("FindIngredients")
+            tree("CreatePotion")
+            tree("DeliverPotion")
 
 tree("Idle")
     sequence
@@ -31,5 +33,19 @@ tree("FindIngredients")
     sequence
         FindIngredients
         fallback
-            IsIngredientReached
+            AreAllIngredientsFound
+            Succeed
+
+tree("CreatePotion")
+    sequence
+        CreatePotion
+        fallback
+            IsPotionCreated
+            Succeed
+
+tree("DeliverPotion")
+    sequence
+        DeliverPotion
+        fallback
+            PotionDelivered
             Succeed
