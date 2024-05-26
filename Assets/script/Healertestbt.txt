@@ -7,6 +7,8 @@ tree("Root")
             tree("FindIngredients")
             tree("CreatePotion")
             tree("DeliverPotion")
+            tree("AdministerPotion")
+            tree("Celebrate")
 
 tree("Idle")
     sequence
@@ -49,3 +51,15 @@ tree("DeliverPotion")
         fallback
             PotionDelivered
             Succeed
+
+tree("AdministerPotion")
+    sequence
+        AdministerPotion
+        fallback
+            IsPotionGiven
+            Succeed
+
+tree("Celebrate")
+    sequence
+        Celebrate
+        Succeed

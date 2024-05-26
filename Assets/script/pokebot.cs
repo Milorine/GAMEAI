@@ -14,7 +14,10 @@ public class pokebot : MonoBehaviour
 
     void Update()
     {
-        // Check for input or condition to spawn a cube
+        if (currentCube == null)
+        {
+            SpawnRandomCube();
+        }
     }
 
     private void Start()
