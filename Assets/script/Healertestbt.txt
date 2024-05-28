@@ -4,31 +4,26 @@ tree("Root")
             tree("Idle")
             tree("Approach")
             tree("IdentifyWound")
-            tree("FindIngredients")
-            tree("CreatePotion")
-            tree("DeliverPotion")
-            tree("AdministerPotion")
-            tree("Celebrate")
 
 tree("Idle")
     sequence
         Idle
         fallback
-            IsPokebotDetected
+            IsIdle
             Succeed
 
 tree("Approach")
     sequence
         Approach
         fallback
-            IsPokebotReached
+            IsReachedPlayer
             Succeed
 
 tree("IdentifyWound")
     sequence
         IdentifyWound
         fallback
-            IsWoundIdentified
+            IsPokebotSeated
             Succeed
 
 tree("FindIngredients")

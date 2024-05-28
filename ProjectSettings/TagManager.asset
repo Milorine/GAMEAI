@@ -10,6 +10,7 @@ TagManager:
   - Item3
   - Item4
   - Item5
+  - Pokebot
   layers:
   - Default
   - TransparentFX

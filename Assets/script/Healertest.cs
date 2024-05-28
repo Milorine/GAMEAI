@@ -1,6 +1,9 @@
 using UnityEngine;
 using Panda;
 using System.Linq;
+using TMPro;
+using System.Text.RegularExpressions;
+using UnityEngine.UIElements;
 
 public class Healertest : MonoBehaviour
 {
@@ -23,8 +26,16 @@ public class Healertest : MonoBehaviour
     bool potionDelivered = false;
     bool potionGiven = false;
     bool pokebotDetected = false;
+    bool idling = false;
+    bool reachPlayer = false;
+    bool pokebotSeated = false;
     public GameObject potionprefab;
+    public GameObject counter;
+    public GameObject idleSpot;
     private GameObject potion;
+    public GameObject player;
+    public GameObject counterTop;
+    public GameObject Seat;
     void Start()
     {
         UpdateIngredients();
@@ -38,52 +49,77 @@ public class Healertest : MonoBehaviour
     [Task]
     void Idle()
     {
-        Debug.Log("Idling");
-        if (!walkPoint)
-        {
-            RandomLocation();
-        }
-        if (walkPoint)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, direction, speed * Time.deltaTime);
-        }
-        if (Vector3.Distance(transform.position, direction) < 10f)
-        {
-            walkPoint = false;
-        }
+        transform.position = Vector3.MoveTowards(transform.position, idleSpot.transform.position, speed * Time.deltaTime);
 
-        if (Pokebot != null)
+        if (Vector3.Distance(transform.position, idleSpot.transform.position) < 1f)
         {
-            pokebotDetected = true;
+            idling = true;
             Task.current.Succeed();
         }
-    }
+        //Debug.Log("Idling");
+        //if (!walkPoint)
+        //{
+        //    RandomLocation();
+        //}
+        //if (walkPoint)
+        //{
+        //    transform.position = Vector3.MoveTowards(transform.position, direction, speed * Time.deltaTime);
+        //}
+        //if (Vector3.Distance(transform.position, direction) < 10f)
+        //{
+        //    walkPoint = false;
+        //}
 
+        //if (Pokebot != null)
+        //{
+        //    pokebotDetected = true;
+        //    Task.current.Succeed();
+        //}
+    }
+    [Task]
+    bool IsIdle()
+    {
+        return idling;
+    }
     [Task]
     bool IsPokebotDetected()
     {
         return pokebotDetected;
     }
+    [Task]
+    bool IsReachedPlayer()
+    {
+        return reachPlayer;
+    }
 
     [Task]
     void Approach()
     {
-        Debug.Log(reachPokebot);
-        if (Pokebot != null && !reachPokebot)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, Pokebot.position, speed * Time.deltaTime);
-            Debug.Log("Approaching Pokebot");
+        if (Vector3.Distance(player.transform.position, counterTop.transform.position) < 1.5f)
+        {  
+            transform.position = Vector3.MoveTowards(transform.position, counter.transform.position, speed * Time.deltaTime);
         }
-
-        if (Vector3.Distance(transform.position, Pokebot.position) < 1.5f)
+        if (Vector3.Distance(transform.position, counter.transform.position) < 1f)
         {
-            reachPokebot = true;
+            reachPlayer = true;
             Task.current.Succeed();
         }
-        if(Pokebot == null)
-        {
-            Task.current.Fail();
-        }
+        //Debug.Log(reachPokebot);
+        //if (Pokebot != null && !reachPokebot)
+        //{
+        //    transform.position = Vector3.MoveTowards(transform.position, Pokebot.position, speed * Time.deltaTime);
+        //    Debug.Log("Approaching Pokebot");
+        //}
+
+        //if (Vector3.Distance(transform.position, Pokebot.position) < 1.5f)
+        //{
+        //    reachPokebot = true;
+        //    Task.current.Succeed();
+        //}
+        //if(Pokebot == null)
+        //{
+        //    Task.current.Fail();
+        //}
     }
 
     [Task]
@@ -95,33 +131,53 @@ public class Healertest : MonoBehaviour
     [Task]
     void IdentifyWound()
     {
-        Debug.Log("Identifying Wound on Pokebot");
-        if (Pokebot != null)
+        GameObject pokebot = GameObject.Find("Pokebot");
+
+        pokebot.transform.position = transform.position + Vector3.up * 1.5f;
+        pokebot.transform.position = Vector3.MoveTowards(pokebot.transform.position, transform.position, speed * Time.deltaTime);
+
+        transform.position = Vector3.MoveTowards(transform.position, Seat.transform.position, speed * Time.deltaTime);
+
+        //Debug.Log("Identifying Wound on Pokebot");
+        //if (Pokebot != null)
+        //{
+        //    angle += orbitSpeed * Time.deltaTime;
+        //    float x = Mathf.Cos(angle) * orbitRadius;
+        //    float z = Mathf.Sin(angle) * orbitRadius;
+
+        //    if (orbitCount < 2)
+        //    {
+        //        transform.position = Pokebot.position + new Vector3(x, 0.7f, z);
+        //    }
+
+        //    if (orbitCount == 2)
+        //    {
+        //        Task.current.Succeed();
+        //        return;
+        //    }
+
+        //    if (angle >= 2 * Mathf.PI)
+        //    {
+        //        orbitCount++;
+        //        angle = 0f;
+        //    }
+        //}
+        if (Vector3.Distance(transform.position, Seat.transform.position) < 1.5f)
         {
-            angle += orbitSpeed * Time.deltaTime;
-            float x = Mathf.Cos(angle) * orbitRadius;
-            float z = Mathf.Sin(angle) * orbitRadius;
-
-            if (orbitCount < 2)
-            {
-                transform.position = Pokebot.position + new Vector3(x, 0.7f, z);
-            }
-
-            if (orbitCount == 2)
-            {
-                Task.current.Succeed();
-                return;
-            }
-
-            if (angle >= 2 * Mathf.PI)
-            {
-                orbitCount++;
-                angle = 0f;
-            }
+            pokebot.transform.position = Seat.transform.position + Vector3.up * 0.3f;
         }
-        
+        if (Vector3.Distance(pokebot.transform.position, Seat.transform.position) < 1f)
+        {
+            pokebotSeated = true;
+            Task.current.Succeed();
+        }
     }
 
+    [Task]
+    bool IsPokebotSeated()
+    {
+        return pokebotSeated;
+    }
     [Task]
     bool IsWoundIdentified()
     {
