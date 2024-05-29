@@ -31,7 +31,7 @@ public class playerMovement : MonoBehaviour
         float moveZ = Input.GetAxis("Vertical");
 
         // Calculate movement direction
-        Vector3 move = transform.right * moveX + transform.forward * moveZ;
+        Vector3 move = transform.right * -moveZ + transform.forward * moveX;
 
         // Apply movement
         characterController.Move(move * speed * Time.deltaTime);

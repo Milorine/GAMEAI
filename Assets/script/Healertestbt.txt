@@ -4,6 +4,10 @@ tree("Root")
             tree("Idle")
             tree("Approach")
             tree("IdentifyWound")
+            tree("FindIngredients")
+            tree("CreatePotion")
+            tree("DeliverPotion")
+            tree("ReturnPokebot")
 
 tree("Idle")
     sequence
@@ -47,14 +51,9 @@ tree("DeliverPotion")
             PotionDelivered
             Succeed
 
-tree("AdministerPotion")
+tree("ReturnPokebot")
     sequence
-        AdministerPotion
+        ReturnPokebot
         fallback
-            IsPotionGiven
+            IsPokebotGivenBack
             Succeed
-
-tree("Celebrate")
-    sequence
-        Celebrate
-        Succeed

@@ -11,6 +11,11 @@ TagManager:
   - Item4
   - Item5
   - Pokebot
+  - PotionMaker
+  - IdleSpot
+  - CounterHealer
+  - CounterPlayer
+  - Seat
   layers:
   - Default
   - TransparentFX

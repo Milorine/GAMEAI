@@ -6,7 +6,8 @@ using System.Text.RegularExpressions;
 using UnityEngine.UIElements;
 
 public class Healertest : MonoBehaviour
-{
+{   
+    public pokebotMovement pokebotMovement;
     public float speed = 5f;  //healer speed
     public Transform Pokebot; //pokebot prefab
     private Vector3 direction; //direction for healer bot
@@ -29,13 +30,10 @@ public class Healertest : MonoBehaviour
     bool idling = false;
     bool reachPlayer = false;
     bool pokebotSeated = false;
+    bool potionCreated = true;
+    bool pokebotGivenBack = false;
     public GameObject potionprefab;
-    public GameObject counter;
-    public GameObject idleSpot;
     private GameObject potion;
-    public GameObject player;
-    public GameObject counterTop;
-    public GameObject Seat;
     void Start()
     {
         UpdateIngredients();
@@ -48,11 +46,11 @@ public class Healertest : MonoBehaviour
 
     [Task]
     void Idle()
-    {
-        transform.position = Vector3.MoveTowards(transform.position, idleSpot.transform.position, speed * Time.deltaTime);
-
-        if (Vector3.Distance(transform.position, idleSpot.transform.position) < 1f)
-        {
+    {   
+        Transform idleSpot = GameObject.FindGameObjectWithTag("IdleSpot").transform;
+        transform.position = Vector3.MoveTowards(transform.position, idleSpot.position, speed * Time.deltaTime);
+        if (Vector3.Distance(transform.position, idleSpot.position) < 1f)
+        {   
             idling = true;
             Task.current.Succeed();
         }
@@ -94,12 +92,16 @@ public class Healertest : MonoBehaviour
 
     [Task]
     void Approach()
-    {
-        if (Vector3.Distance(player.transform.position, counterTop.transform.position) < 1.5f)
+    {   
+        Transform player = GameObject.FindGameObjectWithTag("Player").transform;
+        Transform counterPlayer = GameObject.FindGameObjectWithTag("CounterPlayer").transform;
+        Transform counterHealer = GameObject.FindGameObjectWithTag("CounterHealer").transform;
+        Debug.Log(Vector3.Distance(transform.position, counterHealer.transform.position));
+        if (Vector3.Distance(player.position, counterPlayer.transform.position) < 1.5f)
         {  
-            transform.position = Vector3.MoveTowards(transform.position, counter.transform.position, speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, counterHealer.transform.position, speed * Time.deltaTime);
         }
-        if (Vector3.Distance(transform.position, counter.transform.position) < 1f)
+        if (Vector3.Distance(transform.position, counterHealer.transform.position) < 1f)
         {
             reachPlayer = true;
             Task.current.Succeed();
@@ -132,11 +134,12 @@ public class Healertest : MonoBehaviour
     void IdentifyWound()
     {
         GameObject pokebot = GameObject.Find("Pokebot");
-
+        Transform Seat = GameObject.Find("Seat").transform;
+        pokebotMovement.follow = false;
         pokebot.transform.position = transform.position + Vector3.up * 1.5f;
         pokebot.transform.position = Vector3.MoveTowards(pokebot.transform.position, transform.position, speed * Time.deltaTime);
 
-        transform.position = Vector3.MoveTowards(transform.position, Seat.transform.position, speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, Seat.position, speed * Time.deltaTime);
 
         //Debug.Log("Identifying Wound on Pokebot");
         //if (Pokebot != null)
@@ -186,7 +189,7 @@ public class Healertest : MonoBehaviour
 
     [Task]
     void FindIngredients()
-    {
+    {   
         Debug.Log(itemSelect);
         if (!itemSelect)
         {
@@ -196,12 +199,15 @@ public class Healertest : MonoBehaviour
             Debug.Log(Ingredient);
             Debug.Log(ingredientCount);
         }
-
         transform.position = Vector3.MoveTowards(transform.position, Ingredient.transform.position, speed * Time.deltaTime);
 
+        if (Vector3.Distance(transform.position, Ingredient.transform.position) < 1f)
+        {   
+            ingredientCount++;
+            itemSelect = false;
+        }
         if (ingredientCount == 3)
         {   
-            orbitCount = 0;
             Task.current.Succeed();
         }
 
@@ -212,7 +218,8 @@ public class Healertest : MonoBehaviour
     bool AreAllIngredientsFound()
     {
         if (ingredientCount == 3)
-        {
+        {   
+            ingredientCount = 0;
             return true;
         }
         else
@@ -224,30 +231,32 @@ public class Healertest : MonoBehaviour
     [Task]
     void CreatePotion()
     {
-       
-        Vector3 cubePosition = transform.position + Vector3.up * spawnHeight;
-        potion = Instantiate(potionprefab, cubePosition, Quaternion.identity);
+        Transform potionMaker = GameObject.FindGameObjectWithTag("PotionMaker").transform;
+        transform.position = Vector3.MoveTowards(transform.position, potionMaker.position, speed * Time.deltaTime);
 
+        if(Vector3.Distance(transform.position, potionMaker.position) < 1)
+        {
+            Vector3 cubePosition = transform.position + Vector3.up * spawnHeight;
+            potion = Instantiate(potionprefab, cubePosition, Quaternion.identity);
+
+        }
 
         if (potion != null)
         {
             Task.current.Succeed();
-        }
-        if (potion == null)
-        {
-            Task.current.Fail();
         }
     }
 
     [Task]
     bool IsPotionCreated()
     {
-        return true;
+        return potionCreated;
     }
 
     [Task]
     void DeliverPotion()
-    {
+    {   
+        GameObject pokebot = GameObject.Find("Pokebot");
         if (potion != null)
         {
             Vector3 healerHead = transform.position + Vector3.up * 2f;
@@ -255,11 +264,12 @@ public class Healertest : MonoBehaviour
         }
         Debug.Log("Delivering potion to Pokebot");
 
-        transform.position = Vector3.MoveTowards(transform.position, Pokebot.position, speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, pokebot.transform.position, speed * Time.deltaTime);
 
-        if (Vector3.Distance(transform.position, Pokebot.position) < 2f)
+        if (Vector3.Distance(transform.position, pokebot.transform.position) < 2f)
         {
             potionDelivered = true;
+            Destroy(potion);
             Task.current.Succeed();
         }
     }
@@ -271,53 +281,58 @@ public class Healertest : MonoBehaviour
         return potionDelivered;
     }
 
+
     [Task]
-    void AdministerPotion()
-    {
-        Debug.Log("Administering Potion to Pokebot");
-        if (Pokebot != null)
-        {
-            angle += orbitSpeed * Time.deltaTime;
-            float x = Mathf.Cos(angle) * orbitRadius;
-            float z = Mathf.Sin(angle) * orbitRadius;
+    void ReturnPokebot()
+    {   
+        Transform counterHealer = GameObject.FindGameObjectWithTag("CounterHealer").transform;
+        Transform pokebot = GameObject.FindGameObjectWithTag("Pokebot").transform;
+        Transform player = GameObject.FindGameObjectWithTag("Player").transform;
+        pokebot.position = transform.position + Vector3.up * 1.5f;
+        pokebot.position = Vector3.MoveTowards(pokebot.position, transform.position, speed * Time.deltaTime);
 
-            if (orbitCount < 2)
-            {
-                transform.position = Pokebot.position + new Vector3(x, 0.7f, z);
-            }
+        transform.position = Vector3.MoveTowards(transform.position, counterHealer.position, speed * Time.deltaTime);
 
-            if (orbitCount == 2)
-            {   
-                Destroy(potion);
-                potionGiven = true;
-                Task.current.Succeed();
-                return;
-            }
-
-            if (angle >= 2 * Mathf.PI)
-            {
-                orbitCount++;
-                angle = 0f;
-            }
+        
+        Debug.Log("Distance: " + Vector3.Distance(transform.position, counterHealer.position));
+        if (Vector3.Distance(transform.position, counterHealer.position) < 1f);
+        {       
+            //pokebot.transform.position = player.position;  
+            pokebotGivenBack = true;
+            Task.current.Succeed();
         }
+        // Debug.Log("Administering Potion to Pokebot");
+        // if (Pokebot != null)
+        // {
+        //     angle += orbitSpeed * Time.deltaTime;
+        //     float x = Mathf.Cos(angle) * orbitRadius;
+        //     float z = Mathf.Sin(angle) * orbitRadius;
+
+        //     if (orbitCount < 2)
+        //     {
+        //         transform.position = Pokebot.position + new Vector3(x, 0.7f, z);
+        //     }
+
+        //     if (orbitCount == 2)
+        //     {   
+        //         Destroy(potion);
+        //         potionGiven = true;
+        //         Task.current.Succeed();
+        //         return;
+        //     }
+
+        //     if (angle >= 2 * Mathf.PI)
+        //     {
+        //         orbitCount++;
+        //         angle = 0f;
+        //     }
+        // }
     }
 
     [Task]
-    bool IsPotionGiven()
+    bool IsPokebotGivenBack()
     {
-        return potionGiven;
-    }
-
-    [Task]
-    void Celebrate()
-    {
-        Debug.Log("Celebrating");
-        GameObject HealedPokebot = GameObject.FindWithTag("Bot");
-        Destroy(HealedPokebot);
-        reachPokebot = false;
-        Task.current.Succeed();
-        orbitCount = 0;
-        ingredientCount = 0;
+        return pokebotGivenBack;
     }
 
     void OnTriggerEnter(Collider collide)
@@ -327,11 +342,11 @@ public class Healertest : MonoBehaviour
             Pokebot = collide.transform;
         }
 
-        if (collide.gameObject == Ingredient)
-        {
-            itemSelect = false;
-            ingredientCount++;
-        }
+        // if (collide.gameObject == Ingredient)
+        // {
+        //     itemSelect = false;
+        //     ingredientCount++;
+        // }
     }
 
     void OnTriggerExit(Collider collide)
