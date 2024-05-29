@@ -5,14 +5,18 @@ using UnityEngine;
 
 public class pokebotMovement : MonoBehaviour
 {
-
     public GameObject player;
-    public float followSpeed = 5f;
-    public float stoppingDistance = 2f;
+    public float speed = 5f;
+    public float maxDistanceFromPlayer = 10f;
     public bool follow = true;
+    private Transform target;
     void Update()
     {
         followPlayer();
+    }
+    void Awake()
+    {
+        target = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     private void Start()
@@ -23,11 +27,18 @@ public class pokebotMovement : MonoBehaviour
     public void followPlayer()
     {   
 
-        Vector3 playerPosition = player.transform.position;
-        playerPosition.y = 0.2f;
-        if (playerPosition.magnitude > stoppingDistance && follow)
+        Vector3 dirToPlayer = target.position - transform.position;
+
+        if (dirToPlayer.magnitude > maxDistanceFromPlayer)
         {
-            transform.position = Vector3.Lerp(transform.position, playerPosition, followSpeed * Time.deltaTime);
+            dirToPlayer = dirToPlayer.normalized * maxDistanceFromPlayer;
+        }
+
+        // Calculate the new position within the controlled radius
+        Vector3 newPosition = target.position - dirToPlayer;
+        if (follow){
+        // Update the position
+        transform.position = Vector3.MoveTowards(transform.position, newPosition, speed * Time.deltaTime);
         }
     }
 

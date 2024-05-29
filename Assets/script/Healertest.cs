@@ -4,23 +4,19 @@ using System.Linq;
 using TMPro;
 using System.Text.RegularExpressions;
 using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class Healertest : MonoBehaviour
 {   
+    public Text displayText;
     public pokebotMovement pokebotMovement;
     public float speed = 5f;  //healer speed
-    public Transform Pokebot; //pokebot prefab
     private Vector3 direction; //direction for healer bot
-    private int orbitCount = 0; //orbit count for healer
-    bool walkPoint = false; //walkpoint for healer
     bool reachPokebot = false; //if healer rach pokebot
     [SerializeField] LayerMask groundLayer; //layermask for ground
     GameObject[] ingredients; // ingredient array
     bool itemSelect = false; //selecting ingredient to go to
     GameObject Ingredient; // ingredient
-    public float orbitSpeed = 1f; //orbit speed
-    public float orbitRadius = 2f; // orbit radius
-    private float angle = 0f; // angle of orbit
     private int ingredientCount = 0; // ingredient count
     public float followSpeed = 20f; //potion follow speed
     public float spawnHeight = 2f; // potion follow height
@@ -34,6 +30,7 @@ public class Healertest : MonoBehaviour
     bool pokebotGivenBack = false;
     public GameObject potionprefab;
     private GameObject potion;
+    private bool isInteract;
     void Start()
     {
         UpdateIngredients();
@@ -181,11 +178,6 @@ public class Healertest : MonoBehaviour
     {
         return pokebotSeated;
     }
-    [Task]
-    bool IsWoundIdentified()
-    {
-        return orbitCount >= 2;
-    }
 
     [Task]
     void FindIngredients()
@@ -291,14 +283,11 @@ public class Healertest : MonoBehaviour
         pokebot.position = transform.position + Vector3.up * 1.5f;
         pokebot.position = Vector3.MoveTowards(pokebot.position, transform.position, speed * Time.deltaTime);
 
-        transform.position = Vector3.MoveTowards(transform.position, counterHealer.position, speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, counterHealer.transform.position, speed * Time.deltaTime);
 
-        
-        Debug.Log("Distance: " + Vector3.Distance(transform.position, counterHealer.position));
-        if (Vector3.Distance(transform.position, counterHealer.position) < 1f);
-        {       
-            //pokebot.transform.position = player.position;  
-            pokebotGivenBack = true;
+        if (Vector3.Distance(transform.position, counterHealer.transform.position) < 1f)
+        {
+            pokebotMovement.follow = true;
             Task.current.Succeed();
         }
         // Debug.Log("Administering Potion to Pokebot");
@@ -335,58 +324,42 @@ public class Healertest : MonoBehaviour
         return pokebotGivenBack;
     }
 
-    void OnTriggerEnter(Collider collide)
+    [Task]
+    bool Display(string text)
     {
-        if (collide.gameObject.CompareTag("Bot"))
+        if (displayText != null)
         {
-            Pokebot = collide.transform;
+            displayText.text = text;
+            displayText.enabled = text != "";
         }
-
-        // if (collide.gameObject == Ingredient)
-        // {
-        //     itemSelect = false;
-        //     ingredientCount++;
-        // }
+        return true;
     }
 
-    void OnTriggerExit(Collider collide)
+    [Task]
+    bool QueryPlayer(string text)
     {
-        if (collide.gameObject.CompareTag("Bot"))
-        {
-            reachPokebot = false;
-        }
+            displayText.text = text;
+            //Task.current.Complete(Input.GetKeyDown(KeyCode.Y) || Input.GetKeyDown(KeyCode.N));
+            return true;
+    }
+    [Task]
 
-
+    bool IsInteract()
+    {
+        return isInteract;
+    }
+    [Task]
+    bool StartInteract()
+    {
+        isInteract = true;
+        return true;
     }
 
-    void OnCollisionEnter(Collision collision)
+    [Task]
+    bool EndInteract()
     {
-        if (collision.gameObject.CompareTag("Bot"))
-        {
-            reachPokebot = true;
-        }
-
-
-    }
-
-    void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Bot"))
-        {
-            reachPokebot = false;
-        }
-    }
-
-    void RandomLocation()
-    {
-        float x = Random.Range(-15f, 15f);
-        float z = Random.Range(-15f, 15f);
-        direction = new Vector3(transform.position.x + x, transform.position.y, transform.position.z + z);
-
-        if (Physics.Raycast(direction, Vector3.down, groundLayer))
-        {
-            walkPoint = true;
-        }
+        isInteract = false;
+        return true;
     }
     void UpdateIngredients()
     {

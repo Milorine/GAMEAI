@@ -1,16 +1,17 @@
 tree("Root")
     repeat
-        sequence
-            tree("Idle")
+        fallback
             tree("Approach")
             tree("IdentifyWound")
             tree("FindIngredients")
             tree("CreatePotion")
             tree("DeliverPotion")
             tree("ReturnPokebot")
+            tree("Idle")
 
 tree("Idle")
     sequence
+        Display("No customers, Time to Idle")
         Idle
         fallback
             IsIdle
@@ -20,8 +21,17 @@ tree("Approach")
     sequence
         Approach
         fallback
-            IsReachedPlayer
-            Succeed
+                sequence
+                    IsKeyDown("Y")
+                    Display("Please follow me.")
+                    StartInteract
+                sequence
+                    IsKeyDown("N")
+                    Display("Please enjoy the exhibits.")
+        sequence
+            fallback
+                not EndInteract
+            Display("No response received.")
 
 tree("IdentifyWound")
     sequence
@@ -49,6 +59,7 @@ tree("DeliverPotion")
         DeliverPotion
         fallback
             PotionDelivered
+            Wait(2.0)
             Succeed
 
 tree("ReturnPokebot")
