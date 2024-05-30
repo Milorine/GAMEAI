@@ -1,70 +1,61 @@
 tree("Root")
     repeat
         fallback
-            tree("Approach")
-            tree("IdentifyWound")
-            tree("FindIngredients")
-            tree("CreatePotion")
-            tree("DeliverPotion")
             tree("ReturnPokebot")
+            tree("DeliverPotion")
+            tree("CreatePotion")
+            tree("FindIngredients")
+            tree("IdentifyWound")
+            tree("Approach")
             tree("Idle")
 
 tree("Idle")
     sequence
         Display("No customers, Time to Idle")
         Idle
-        fallback
-            IsIdle
-            Succeed
 
 tree("Approach")
     sequence
         Approach
         fallback
-                sequence
-                    IsKeyDown("Y")
-                    Display("Please follow me.")
-                    StartInteract
-                sequence
-                    IsKeyDown("N")
-                    Display("Please enjoy the exhibits.")
-        sequence
-            fallback
-                not EndInteract
-            Display("No response received.")
+            IsInteract
+            sequence
+                QueryPlayer("hael smt")
+                fallback
+                    sequence
+                        IsKeyDown("Y")
+                        Display("Please follow me.")
+                        StartInteract
+                    sequence
+                        IsKeyDown("N")
+                        Display("Please enjoy the exhibits.")
 
 tree("IdentifyWound")
     sequence
-        IdentifyWound
-        fallback
-            IsPokebotSeated
-            Succeed
+        IsInteract
+        sequence
+            IdentifyWound
 
 tree("FindIngredients")
     sequence
-        FindIngredients
-        fallback
-            AreAllIngredientsFound
-            Succeed
+        IsPokebotSeated
+        sequence
+            FindIngredients
 
 tree("CreatePotion")
     sequence
-        CreatePotion
-        fallback
-            IsPotionCreated
-            Succeed
+        AllIngredientsFound
+        sequence
+            CreatePotion
 
 tree("DeliverPotion")
     sequence
-        DeliverPotion
-        fallback
-            PotionDelivered
-            Wait(2.0)
-            Succeed
+        IsPotionCreated
+        sequence
+            DeliverPotion
 
 tree("ReturnPokebot")
     sequence
-        ReturnPokebot
-        fallback
-            IsPokebotGivenBack
-            Succeed
+        IsPotionDelivered
+        sequence
+            ReturnPokebot

@@ -149,6 +149,7 @@ MonoBehaviour:
   followSpeed: 20
   spawnHeight: 2
   potionprefab: {fileID: 4180177887339174000, guid: 7636f1ca55800564ea8fca1852d5867c, type: 3}
+  healerActive: 0
 --- !u!1 &394246554
 GameObject:
   m_ObjectHideFlags: 0
@@ -1669,7 +1670,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1496855619}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.37, y: 1.07, z: -1.09}
+  m_LocalPosition: {x: -0.27, y: 1.07, z: -2.26}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2011,6 +2012,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: f96e251ac81951643b90bc5765731151, type: 2}
+    - target: {fileID: 6965427019983612537, guid: a8c0f55408dfb8b4888c6d10e89e1e18, type: 3}
+      propertyPath: autoReset
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6965427019983612537, guid: a8c0f55408dfb8b4888c6d10e89e1e18, type: 3}
       propertyPath: m_Enabled
       value: 1
