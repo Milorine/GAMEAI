@@ -5,7 +5,8 @@ tree("Root")
             tree("DeliverPotion")
             tree("CreatePotion")
             tree("FindIngredients")
-            tree("IdentifyWound")
+            tree("PickPokebot")
+            tree("Question")
             tree("Approach")
             tree("Idle")
 
@@ -16,30 +17,33 @@ tree("Idle")
 
 tree("Approach")
     sequence
-        Approach
-        fallback
-            IsInteract
-            sequence
-                QueryPlayer("hael smt")
-                fallback
-                    sequence
-                        IsKeyDown("Y")
-                        Display("Please follow me.")
-                        StartInteract
-                    sequence
-                        IsKeyDown("N")
-                        Display("Please enjoy the exhibits.")
+        while IsPlayerClose
+            Approach
 
-tree("IdentifyWound")
+tree("Question")
+    sequence
+        QueryPlayer("Welcome to healer Center. Do you want me to heal your pokebot")
+        fallback
+            sequence
+                IsKeyDown("Y")
+                Display("Okay, Please wait a while")
+                StartInteract
+            sequence
+                IsKeyDown("N")
+                Display("No problem, enjoy your stay here")
+                Idle
+
+tree("PickPokebot")
     sequence
         IsInteract
         sequence
-            IdentifyWound
+            PickPokebot
 
 tree("FindIngredients")
     sequence
         IsPokebotSeated
         sequence
+            Display("Finding ingredients")
             FindIngredients
 
 tree("CreatePotion")
@@ -52,10 +56,14 @@ tree("DeliverPotion")
     sequence
         IsPotionCreated
         sequence
+            Display("Delivering potion")
             DeliverPotion
 
 tree("ReturnPokebot")
     sequence
         IsPotionDelivered
         sequence
+            Display("Your pokebot is on the way")
             ReturnPokebot
+            Display("Your Pokebot is now all healed up")
+            Wait(2.0)

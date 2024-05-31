@@ -85,9 +85,15 @@ public class Healertest : MonoBehaviour
         }
     }   
 
-
+      [Task]
+    bool IsPlayerClose()
+    {
+        Transform player = GameObject.FindGameObjectWithTag("Player").transform;
+        Transform counterPlayer = GameObject.FindGameObjectWithTag("CounterPlayer").transform;
+        return Vector3.Distance(player.position, counterPlayer.transform.position) < 1.5f;
+    }
     [Task]
-    void IdentifyWound()
+    void PickPokebot()
     {   
         isInteract = false;
         GameObject pokebot = GameObject.Find("Pokebot");
@@ -204,7 +210,6 @@ public class Healertest : MonoBehaviour
             Task.current.Succeed();
         }
     }
-
     [Task]
 
     bool IsPotionDelivered()
